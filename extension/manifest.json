@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "ShadowAI Guard",
+  "version": "1.0",
+  "description": "Prevents unauthorized corporate data exfiltration into public LLMs.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.chatgpt.com/*",
+        "*://*.claude.ai/*",
+        "*://*.gemini.google.com/*",
+        "*://*.x.ai/*",
+        "*://*.grok.com/*",
+        "*://*.meta.ai/*",
+        "*://*.llama.meta.com/*",
+        "*://*.chat.deepseek.com/*"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
