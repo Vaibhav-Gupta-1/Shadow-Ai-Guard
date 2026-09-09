@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+shadowai_pii_model/
+pii_dataset.csv
+*.csv
+.env

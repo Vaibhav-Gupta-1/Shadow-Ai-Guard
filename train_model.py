@@ -97,8 +97,11 @@ training_args = TrainingArguments(
     num_train_epochs=3,
     per_device_train_batch_size=8,
     logging_steps=50,
-    save_strategy="epoch",
-    learning_rate=3e-5
+    save_strategy="steps",
+    save_steps=500,
+    save_total_limit=3,
+    learning_rate=3e-5,
+    fp16=True,
 )
 
 trainer = Trainer(
@@ -110,7 +113,17 @@ trainer = Trainer(
 
 # 6. Execute Fine-Tuning
 print("🚀 Starting DistilBERT Fine-Tuning on Kaggle PII Data...")
-trainer.train()
+import os
+
+# Resume automatically if a checkpoint already exists from a previous run
+last_checkpoint = None
+if os.path.isdir(OUTPUT_DIR):
+    checkpoints = [d for d in os.listdir(OUTPUT_DIR) if d.startswith("checkpoint-")]
+    if checkpoints:
+        last_checkpoint = os.path.join(OUTPUT_DIR, sorted(checkpoints, key=lambda x: int(x.split("-")[1]))[-1])
+        print(f"🔁 Resuming from checkpoint: {last_checkpoint}")
+
+trainer.train(resume_from_checkpoint=last_checkpoint)
 
 # 7. Save Fine-Tuned Weights and Tokenizer locally for app.py
 model.save_pretrained(OUTPUT_DIR)
